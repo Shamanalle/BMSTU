@@ -1,0 +1,15 @@
+# Сборка
+*.exe
+*.obj
+*.o
+*.pdb
+*.ilk
+.vs/
+build/
+x64/
+Debug/
+Release/
+
+# Материалы преподавателя
+*.docx
+~$*
