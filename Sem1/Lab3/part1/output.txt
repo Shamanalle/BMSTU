@@ -1,0 +1,64 @@
+=== 1. Reading from input.txt (operator>>) ===
+  [Vector()] empty vector
+  [Vector()] empty vector
+  [Vector()] empty vector
+a = {1, 2, 3, 4.5, 7}  n=5
+b = {10, 20, 30, 40, 50}  n=5
+c = {-1, 0.5, 8}  n=3
+
+=== 2. operator[] ===
+a[0] = 1, a[3] = 4.5
+a[10]: exception "index out of range"
+
+=== 3. Copy constructor: Vector d = a; ===
+  [Vector(const Vector&)] copy, n=5
+after d[0] = 100:
+a = {1, 2, 3, 4.5, 7}
+d = {100, 2, 3, 4.5, 7}
+a and d use different memory: yes
+
+=== 4. Move constructor: Vector e = std::move(d); ===
+  [Vector(Vector&&)] move, n=5
+d = {}  n=0  (moved-from, empty)
+e = {100, 2, 3, 4.5, 7}
+e took memory of d without copying: yes
+
+=== 5. Copy assignment: f = b; ===
+  [Vector()] empty vector
+  [operator=(const Vector&)] copy assignment
+after f[1] = -20:
+b = {10, 20, 30, 40, 50}
+f = {10, -20, 30, 40, 50}
+b and f use different memory: yes
+
+=== 6. Move assignment: g = std::move(f); ===
+  [Vector()] empty vector
+  [operator=(Vector&&)] move assignment
+f = {}  n=0  (moved-from, empty)
+g = {10, -20, 30, 40, 50}
+g took memory of f without copying: yes
+
+=== 7. Variant 1: operator+ (Vector + Vector -> Vector) ===
+  [Vector(int)] n=5
+s = a + b = {1, 2, 3, 4.5, 7} + {10, 20, 30, 40, 50}
+s = {11, 22, 33, 44.5, 57}
+
+s = b + b; (the result is a temporary, so move assignment is chosen)
+  [Vector(int)] n=5
+  [operator=(Vector&&)] move assignment
+  [~Vector()] n=0
+s = {20, 40, 60, 80, 100}
+
+a + c (sizes 5 and 3):
+exception "vectors have different sizes"
+
+=== 8. End of block: destructors ===
+  [~Vector()] n=5
+  [~Vector()] n=5
+  [~Vector()] n=0
+  [~Vector()] n=5
+  [~Vector()] n=0
+  [~Vector()] n=3
+  [~Vector()] n=5
+  [~Vector()] n=5
+Done.
