@@ -87,14 +87,19 @@ Vector& Vector::operator=(Vector&& v) noexcept
     return *this;
 }
 
-// Вариант 1: (Vector, Vector) -> Vector, элемент результата равен сумме
-// соответствующих элементов. Размерности должны совпадать.
-Vector operator+(const Vector& v1, const Vector& v2)
+// Вариант 5: (Vector, double*) -> Vector. Результат имеет длину 2n:
+// сначала идут элементы вектора v, затем элементы массива arr.
+// Длина массива не передаётся, она считается равной длине вектора v.
+Vector operator+(const Vector& v, const double* arr)
 {
-    if (v1.n != v2.n)
-        throw std::invalid_argument("vectors have different sizes");
-    Vector r(v1.n);
-    for (int i = 0; i < v1.n; i++) r.p[i] = v1.p[i] + v2.p[i];
+    if (v.n > 0 && arr == nullptr)
+        throw std::invalid_argument("array is nullptr");
+    Vector r(2 * v.n);
+    for (int i = 0; i < v.n; i++)
+    {
+        r.p[i] = v.p[i];         // первая половина: элементы вектора
+        r.p[v.n + i] = arr[i];   // вторая половина: элементы массива
+    }
     return r;
 }
 

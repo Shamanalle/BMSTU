@@ -1,6 +1,7 @@
-// Лабораторная работа №3, часть 1, вариант 1.
+// Лабораторная работа №3, часть 1, вариант 5.
 // Класс Vector: конструкторы, деструктор, перегрузка операций
-// [], = (копирование), = (перемещение), <<, >> и + (сложение векторов).
+// [], = (копирование), = (перемещение), <<, >> и + (Vector + double*,
+// конкатенация вектора и обычного массива).
 // Входные данные читаются из input.txt, результаты пишутся в output.txt.
 #include <iostream>
 #include <fstream>
@@ -39,6 +40,28 @@ int main()
         fout << "a = " << a << "  n=" << a.size() << "\n";
         fout << "b = " << b << "  n=" << b.size() << "\n";
         fout << "c = " << c << "  n=" << c.size() << "\n";
+
+        // Обычный динамический массив для операции + варианта 5:
+        // в файле число элементов, затем элементы
+        int m;
+        if (!(fin >> m) || m < a.size() || m < c.size())
+        {
+            fout << "Error: wrong size of the array in input.txt\n";
+            cerr << "Wrong format of input.txt" << endl;
+            return 1;
+        }
+        double* arr = new double[m];
+        for (int i = 0; i < m; i++)
+            if (!(fin >> arr[i]))
+            {
+                delete[] arr;
+                fout << "Error: not enough elements of the array in input.txt\n";
+                cerr << "Wrong format of input.txt" << endl;
+                return 1;
+            }
+        fout << "arr = ";
+        for (int i = 0; i < m; i++) fout << arr[i] << ' ';
+        fout << " (plain array double*, " << m << " elements)\n";
 
         fout << "\n=== 2. operator[] ===\n";
         fout << "a[0] = " << a[0] << ", a[3] = " << a[3] << "\n";
@@ -84,25 +107,31 @@ int main()
         fout << "g = " << g << "\n";
         fout << "g took memory of f without copying: " << yesNo(g.data() == old) << "\n";
 
-        fout << "\n=== 7. Variant 1: operator+ (Vector + Vector -> Vector) ===\n";
-        Vector s = a + b;
-        fout << "s = a + b = " << a << " + " << b << "\n";
-        fout << "s = " << s << "\n";
+        fout << "\n=== 7. Variant 5: operator+ (Vector + double* -> Vector, concatenation) ===\n";
+        Vector s = a + arr; // длина arr считается равной длине a (5)
+        fout << "s = a + arr = " << s << "  n=" << s.size() << "\n";
 
-        fout << "\ns = b + b; (the result is a temporary, so move assignment is chosen)\n";
-        s = b + b;
-        fout << "s = " << s << "\n";
+        fout << "\ns = c + arr; (the result is a temporary, so move assignment is chosen)\n";
+        s = c + arr; // длина arr считается равной длине c (3)
+        fout << "s = " << s << "  n=" << s.size()
+             << "  (only " << c.size() << " elements of arr are used)\n";
 
-        fout << "\na + c (sizes " << a.size() << " and " << c.size() << "):\n";
+        fout << "\nz = d + arr; (d is empty after the move)\n";
+        Vector z = d + arr;
+        fout << "z = " << z << "  n=" << z.size() << "\n";
+
+        fout << "\na + nullptr:\n";
         try
         {
-            Vector bad = a + c;
+            const double* none = nullptr;
+            Vector bad = a + none;
             fout << "bad = " << bad << "\n";
         }
         catch (const invalid_argument& ex)
         {
             fout << "exception \"" << ex.what() << "\"\n";
         }
+        delete[] arr; // массив больше не нужен
 
         fout << "\n=== 8. End of block: destructors ===\n";
     }

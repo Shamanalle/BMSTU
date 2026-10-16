@@ -28,8 +28,9 @@ public:
     Vector& operator=(const Vector& v);     // присваивание с копированием
     Vector& operator=(Vector&& v) noexcept; // присваивание с перемещением
 
-    // Вариант 1: сложение векторов одинаковой размерности
-    friend Vector operator+(const Vector& v1, const Vector& v2);
+    // Вариант 5: сложение (конкатенация) вектора и обычного массива.
+    // Длина массива arr считается равной длине вектора v.
+    friend Vector operator+(const Vector& v, const double* arr);
 
     friend std::ostream& operator<<(std::ostream& os, const Vector& v); // вывод в поток
     friend std::istream& operator>>(std::istream& is, Vector& v);       // ввод из потока
